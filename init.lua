@@ -62,6 +62,9 @@ require('packer').startup(function(use)
   -- Null LS for LSP without global packages
   use 'jose-elias-alvarez/null-ls.nvim'
 
+  -- Fast file switching 
+  use 'ThePrimeagen/harpoon'
+
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
   if has_plugins then
@@ -448,6 +451,17 @@ null_ls.setup({
     null_ls.builtins.formatting.eslint,
   },
 })
+
+local mark = require('harpoon.mark');
+local ui = require('harpoon.ui');
+
+vim.keymap.set('n', '<leader>a', mark.add_file);
+vim.keymap.set('n', '<C-e>', ui.toggle_quick_menu);
+
+vim.keymap.set("n", "<C-h>", function() ui.nav_file(1) end)
+vim.keymap.set("n", "<C-t>", function() ui.nav_file(2) end)
+vim.keymap.set("n", "<C-n>", function() ui.nav_file(3) end)
+vim.keymap.set("n", "<C-s>", function() ui.nav_file(4) end)
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
