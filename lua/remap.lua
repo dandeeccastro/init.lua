@@ -1,8 +1,11 @@
 vim.g.mapleader = ' '
 
+-- netrw open
+vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+
 -- auto indenting selected lines when coming in indented section
-vim.keymap.set("v", "J", ":m >+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m <-2<CR>gv=gv")
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
 -- 
 vim.keymap.set("n", "J", "mzJ`z")
