@@ -32,3 +32,6 @@ vim.opt.termguicolors = true
 vim.opt.updatetime = 50
 
 vim.opt.signcolumn = "yes"
+
+vim.opt.wrap = false
+vim.opt.cursorline = true
