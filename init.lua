@@ -37,6 +37,7 @@ require('lazy').setup({
 
   'ThePrimeagen/Harpoon',
   'jose-elias-alvarez/null-ls.nvim',
+  'mattn/emmet-vim',
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -499,9 +500,11 @@ local null_ls = require('null-ls')
 null_ls.setup({
   sources = {
     null_ls.builtins.formatting.rubocop,
+    null_ls.builtins.diagnostics.rubocop,
 
     null_ls.builtins.diagnostics.eslint,
-    null_ls.builtins.diagnostics.eslint_d,
+    null_ls.builtins.formatting.eslint,
+    null_ls.builtins.code_actions.eslint,
   },
 })
 -- The line beneath this is called `modeline`. See `:help modeline`
