@@ -38,6 +38,7 @@ require('lazy').setup({
   'ThePrimeagen/Harpoon',
   'jose-elias-alvarez/null-ls.nvim',
   'mattn/emmet-vim',
+  'windwp/nvim-autopairs',
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -285,7 +286,7 @@ require('nvim-treesitter.configs').setup {
   auto_install = false,
 
   highlight = { enable = true },
-  indent = { enable = true },
+  -- indent = { enable = true },
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -402,8 +403,10 @@ local servers = {
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
 
+  eslint = {},
+  tsserver = {},
+  ruby_ls = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -455,7 +458,7 @@ cmp.setup {
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
-    ['<CR>'] = cmp.mapping.confirm {
+    ['<C-l>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
