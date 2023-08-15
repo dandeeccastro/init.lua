@@ -45,7 +45,6 @@ require('lazy').setup({
     opts = {}
   },
 
-
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -103,19 +102,13 @@ require('lazy').setup({
     },
   },
 
-  -- {
-  --   -- Theme inspired by Atom
-  --   'navarasu/onedark.nvim',
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd.colorscheme 'onedark'
-  --   end,
-  -- },
   {
-    "ellisonleao/gruvbox.nvim",
+    -- Theme inspired by Atom
+    'folke/tokyonight.nvim',
+    priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'gruvbox'
-    end
+      vim.cmd.colorscheme 'tokyonight-night'
+    end,
   },
 
   {
@@ -125,7 +118,7 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'gruvbox',
+        theme = 'tokyonight',
         component_separators = '|',
         section_separators = '',
       },
