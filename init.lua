@@ -38,7 +38,13 @@ require('lazy').setup({
   'ThePrimeagen/Harpoon',
   'jose-elias-alvarez/null-ls.nvim',
   'mattn/emmet-vim',
-  'windwp/nvim-autopairs',
+
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    opts = {}
+  },
+
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -97,13 +103,19 @@ require('lazy').setup({
     },
   },
 
+  -- {
+  --   -- Theme inspired by Atom
+  --   'navarasu/onedark.nvim',
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme 'onedark'
+  --   end,
+  -- },
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
+    "ellisonleao/gruvbox.nvim",
     config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
+      vim.cmd.colorscheme 'gruvbox'
+    end
   },
 
   {
@@ -113,7 +125,7 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'onedark',
+        theme = 'gruvbox',
         component_separators = '|',
         section_separators = '',
       },
@@ -404,6 +416,7 @@ local servers = {
   -- pyright = {},
   -- rust_analyzer = {},
 
+  solargraph = {},
   eslint = {},
   tsserver = {},
   ruby_ls = {},
