@@ -35,7 +35,9 @@ require('lazy').setup({
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
+  -- Some QoL plugins
   'ThePrimeagen/Harpoon',
+  'ThePrimeagen/git-worktree.nvim',
   'jose-elias-alvarez/null-ls.nvim',
   'mattn/emmet-vim',
 
@@ -74,6 +76,8 @@ require('lazy').setup({
 
       -- Adds LSP completion capabilities
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
@@ -172,10 +176,10 @@ require('lazy').setup({
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 
--- Set highlight on search
+-- Highlight on search
 vim.o.hlsearch = false
 
--- Make line numbers default
+-- Relative line numbers
 vim.wo.number = true
 vim.wo.relativenumber = true
 
@@ -210,10 +214,10 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
-
 vim.o.scrolloff = 5
-
 vim.o.cursorline = true
+
+vim.o.guicursor = ''
 
 -- [[ Basic Keymaps ]]
 
@@ -371,7 +375,7 @@ local on_attach = function(_, bufnr)
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+  -- nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -504,5 +508,11 @@ null_ls.setup({
     null_ls.builtins.code_actions.eslint,
   },
 })
+
+require('git-worktree').setup {}
+require('telescope').load_extension('git_worktree')
+
+vim.keymap.set('n', '<leader>gw', function() require('telescope').extensions.git_worktree.git_worktrees() end)
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
