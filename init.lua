@@ -31,6 +31,14 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+  { 
+    'f-person/git-blame.nvim',
+    config = function()
+      require('gitblame').setup{
+        enabled = false
+      }
+    end
+  },
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -86,6 +94,7 @@ require('lazy').setup({
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
+
   {
     -- Adds git releated signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -108,10 +117,11 @@ require('lazy').setup({
 
   {
     -- Theme inspired by Atom
-    'folke/tokyonight.nvim',
+    'catppuccin/nvim',
+    name = 'catppuccin',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'catppuccin'
     end,
   },
 
@@ -122,7 +132,7 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'tokyonight',
+        theme = 'catppuccin',
         component_separators = '|',
         section_separators = '',
       },
@@ -193,7 +203,13 @@ vim.o.completeopt = 'menuone,noselect' -- Set completeopt to have a better compl
 vim.o.termguicolors = true -- NOTE: You should make sure your terminal supports this
 vim.o.scrolloff = 5
 vim.o.cursorline = true
-vim.o.guicursor = '' -- Old school cursor
+-- vim.o.guicursor = '' -- Old school cursor
+-- vim.o.tabstop = 2
+-- vim.o.softtabstop = 2
+-- vim.o.shiftwidth = 2
+-- vim.o.expandtab = true
+-- vim.o.smarttab = true
+vim.o.linebreak = true
 
 -- [[ Basic Keymaps ]]
 -- Keymaps for better default experience
@@ -204,6 +220,7 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- Moving selected items according to indentation
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+vim.keymap.set("v", "//", "y/\\V<C-R>=escape(@\",'/\\')<CR><CR>")
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -256,7 +273,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim'},
 
   sync_install = false,
   ignore_install = {},
@@ -265,7 +282,9 @@ require('nvim-treesitter.configs').setup {
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
 
-  highlight = { enable = true },
+  highlight = {
+    enable = true,
+  },
   -- indent = { enable = true },
   incremental_selection = {
     enable = true,
@@ -354,6 +373,10 @@ local on_attach = function(_, bufnr)
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+
+  -- Meus configs envolvendo LSP
+  nmap('<leader>ls', ':LspInfo<CR>', '[L]SP [S]tatus')
+  nmap('<leader>lr', ':LspRestart<CR>', '[L]SP [R]estart')
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
@@ -494,7 +517,9 @@ null_ls.setup({
 require('git-worktree').setup {}
 require('telescope').load_extension('git_worktree')
 
-vim.keymap.set('n', '<leader>gw', function() require('telescope').extensions.git_worktree.git_worktrees() end)
+-- Git commands 
+vim.keymap.set('n', '<leader>gg', ':Git<CR>') -- tem que ter um jeito de fazer isso melhor...
+vim.keymap.set('n', '<leader>gw', function() require('telescope').extensions.git_worktree.git_worktrees() end, { desc = '[G]it [W]orktree'})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
