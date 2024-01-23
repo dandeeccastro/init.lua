@@ -31,7 +31,7 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-  { 
+  {
     'f-person/git-blame.nvim',
     config = function()
       require('gitblame').setup{
@@ -121,23 +121,31 @@ require('lazy').setup({
     name = 'catppuccin',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'catppuccin'
+      vim.cmd.colorscheme 'catppuccin-mocha'
     end,
   },
+  -- {
+  --   'folke/tokyonight.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme "tokyonight-night"
+  --   end,
+  -- },
 
-  {
-    -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'catppuccin',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
-  },
+  -- {
+  --   -- Set lualine as statusline
+  --   'nvim-lualine/lualine.nvim',
+  --   -- See `:help lualine.txt`
+  --   opts = {
+  --     options = {
+  --       icons_enabled = false,
+  --       theme = 'catppuccin',
+  --       component_separators = '|',
+  --       section_separators = '',
+  --     },
+  --   },
+  -- },
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
@@ -203,7 +211,7 @@ vim.o.completeopt = 'menuone,noselect' -- Set completeopt to have a better compl
 vim.o.termguicolors = true -- NOTE: You should make sure your terminal supports this
 vim.o.scrolloff = 5
 vim.o.cursorline = true
--- vim.o.guicursor = '' -- Old school cursor
+vim.o.guicursor = '' -- Old school cursor
 -- vim.o.tabstop = 2
 -- vim.o.softtabstop = 2
 -- vim.o.shiftwidth = 2
@@ -221,6 +229,9 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- Moving selected items according to indentation
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set("v", "//", "y/\\V<C-R>=escape(@\",'/\\')<CR><CR>")
+
+vim.keymap.set("n", "<leader>wf", ":w<CR>", { desc = "[W]rite [F]ile" })
+vim.keymap.set("n", "<leader>wa", ":wa<CR>", { desc = "[W]rite [A]ll" })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -502,23 +513,23 @@ vim.keymap.set('n', '<C-j>', function() ui.nav_file(2) end, { desc = '[Harpoon] 
 vim.keymap.set('n', '<C-k>', function() ui.nav_file(3) end, { desc = '[Harpoon] Third file' })
 vim.keymap.set('n', '<C-l>', function() ui.nav_file(4) end, { desc = '[Harpoon] Fourth file' })
 
-local null_ls = require('null-ls')
-null_ls.setup({
-  sources = {
-    null_ls.builtins.formatting.rubocop,
-    null_ls.builtins.diagnostics.rubocop,
-
-    null_ls.builtins.diagnostics.eslint,
-    null_ls.builtins.formatting.eslint,
-    null_ls.builtins.code_actions.eslint,
-  },
-})
+-- local null_ls = require('null-ls')
+-- null_ls.setup({
+--   sources = {
+--     null_ls.builtins.formatting.rubocop,
+--     null_ls.builtins.diagnostics.rubocop,
+--
+--     null_ls.builtins.diagnostics.eslint,
+--     null_ls.builtins.formatting.eslint,
+--     null_ls.builtins.code_actions.eslint,
+--   },
+-- })
 
 require('git-worktree').setup {}
 require('telescope').load_extension('git_worktree')
 
 -- Git commands 
-vim.keymap.set('n', '<leader>gg', ':Git<CR>') -- tem que ter um jeito de fazer isso melhor...
+vim.keymap.set('n', '<leader>gg', ':Git<CR>', { desc = '[G]it [G]ud' }) -- tem que ter um jeito melhor...
 vim.keymap.set('n', '<leader>gw', function() require('telescope').extensions.git_worktree.git_worktrees() end, { desc = '[G]it [W]orktree'})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
