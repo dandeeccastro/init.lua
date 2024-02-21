@@ -212,11 +212,11 @@ vim.o.termguicolors = true -- NOTE: You should make sure your terminal supports 
 vim.o.scrolloff = 5
 vim.o.cursorline = true
 vim.o.guicursor = '' -- Old school cursor
--- vim.o.tabstop = 2
--- vim.o.softtabstop = 2
--- vim.o.shiftwidth = 2
--- vim.o.expandtab = true
--- vim.o.smarttab = true
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+vim.o.shiftwidth = 2
+vim.o.expandtab = true
+vim.o.smarttab = true
 vim.o.linebreak = true
 
 -- [[ Basic Keymaps ]]
