@@ -11,3 +11,4 @@ vim.keymap.set('n', '<leader>osf', vim.cmd.ObsidianSearch, { desc = '[Obsidian] 
 vim.keymap.set('n', '<leader>onf', vim.cmd.ObsidianNew, { desc = '[Obsidian] [N]ew [F]ile'})
 vim.keymap.set('n', '<leader>orn', vim.cmd.ObsidianRename, { desc = '[Obsidian] [R]e[N]ame'})
 vim.keymap.set('n', '<leader>osw', vim.cmd.ObsidianWorkspace, { desc = '[Obsidian] [S]witch [W]orkspace'})
+vim.keymap.set('v', '<leader>ol', vim.cmd.ObsidianLink, { desc = '[Obsidian] [L]ink' })
