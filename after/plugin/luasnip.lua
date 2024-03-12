@@ -28,16 +28,16 @@ end)
 luasnip.add_snippets('javascript', {
     snippet('plghandle', fmt([[
     exports.handle = async (plg, event) => {
-        []
+      []
     };
     ]], { insert_node(1) }, { delimiters = '[]'})),
 
     snippet('plgaxios', fmt([[
     plg.axios({
-        method: '[]',
-        url: [],
-        params: {[]},
-        data: {[]},
+      method: '[]',
+      url: [],
+      params: {[]},
+      data: {[]},
     });
     ]], { choice_node(1, {
         text_node("GET"),
@@ -55,17 +55,17 @@ luasnip.add_snippets('javascript', {
     const [] = require('../../lib/[]s/[]');
 
     const event = {
-        meta: {
-            baseURI: process.env.BASE_URI,
-        },
-        auth: {
-            access_token: process.env.access_token,
-        },
-        input: {[]},
+      meta: {
+        baseURI: process.env.BASE_URI,
+      },
+      auth: {
+        access_token: process.env.access_token,
+      },
+      input: {[]},
     };
 
     describe('[]', () => {
-        []
+      []
     })
     ]], {
         choice_node(1, {
@@ -78,4 +78,37 @@ luasnip.add_snippets('javascript', {
         insert_node(4),
         insert_node(5),
     }, { delimiters = '[]'})),
+
+    snippet('plgmeta', fmt([[
+    exports.metaConfig = {
+      name: {
+        pt_BR: '<>',
+        en: '<>',
+      },
+      description: {
+        pt_BR: '<>',
+        en: '<>',
+      },
+      configuration_fields: {
+        <>,
+      },
+      <>_fields: {
+        type: 'local',
+        fields: [
+          <>
+        ],
+      },
+    };
+    ]], {
+        insert_node(1),
+        insert_node(2),
+        insert_node(3),
+        insert_node(4),
+        insert_node(5),
+        choice_node(6, {
+            text_node('trigger'),
+            text_node('action'),
+        }),
+        insert_node(7),
+    }, { delimiters = '<>'})),
 })
