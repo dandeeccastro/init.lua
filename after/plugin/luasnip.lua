@@ -59,7 +59,7 @@ luasnip.add_snippets('javascript', {
         baseURI: process.env.BASE_URI,
       },
       auth: {
-        access_token: process.env.access_token,
+        access_token: process.env.ACCESS_TOKEN,
       },
       input: {[]},
     };
