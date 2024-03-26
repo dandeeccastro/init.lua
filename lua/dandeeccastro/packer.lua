@@ -19,15 +19,7 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-
-  {
-    'f-person/git-blame.nvim',
-    config = function()
-      require('gitblame').setup {
-	enabled = false
-      }
-    end
-  },
+  'f-person/git-blame.nvim',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -51,6 +43,11 @@ require('lazy').setup({
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
     opts = {}
+  },
+
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' }
   },
 
   {

@@ -35,7 +35,7 @@ luasnip.add_snippets('javascript', {
     snippet('plgaxios', fmt([[
     plg.axios({
       method: '[]',
-      url: [],
+      url: `${event.meta.baseURI}/[]`,
       params: {[]},
       data: {[]},
     });
@@ -90,7 +90,7 @@ luasnip.add_snippets('javascript', {
         en: '<>',
       },
       configuration_fields: {
-        <>,
+        <>
       },
       <>_fields: {
         type: 'local',
