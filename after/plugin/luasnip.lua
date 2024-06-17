@@ -7,6 +7,9 @@ local insert_node = luasnip.insert_node
 local fmt = require('luasnip.extras.fmt').fmt
 local rep = require('luasnip.extras').rep
 
+luasnip.filetype_extend("ruby", {"rails"})
+require("luasnip.loaders.from_vscode").lazy_load()
+
 vim.keymap.set({ 'i', 's' }, '<C-j>', function()
     if luasnip.expand_or_jumpable() then
         luasnip.expand_or_jump()
