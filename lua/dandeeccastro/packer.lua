@@ -46,18 +46,11 @@ require('lazy').setup({
   },
 
   {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' }
-  },
-
-  {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v1.x',
     dependencies = {
       -- LSP Support
       'neovim/nvim-lspconfig',
-      'williamboman/mason.nvim',
-      'williamboman/mason-lspconfig.nvim',
 
       -- Autocompletion
       'hrsh7th/nvim-cmp',
@@ -122,5 +115,14 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
+
+  {
+    'echasnovski/mini.nvim',
+    config = function()
+      require('mini.ai').setup { n_lines = 500 } -- arround/inside melhor
+      require('mini.surround').setup{} -- adicionar/deletar/substituir surroundings
+      require('mini.statusline').setup { use_icons = vim.g.have_nerd_font }
+    end
+  }
 
 }, {})

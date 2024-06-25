@@ -1,11 +1,13 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+vim.g.have_nerd_font = true
+
 vim.o.hlsearch = false -- Highlight on search
 vim.wo.number = true -- Relative line numbers
 vim.wo.relativenumber = true
 vim.o.mouse = '' -- No mouse mode
--- vim.o.clipboard = 'unnamedplus' -- Sync clipboard between OS and Neovim.
+vim.o.clipboard = 'unnamedplus' -- Sync clipboard between OS and Neovim.
 vim.o.breakindent = true -- Enable break indent
 vim.o.undofile = true -- Save undo history
 vim.o.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
@@ -25,3 +27,6 @@ vim.o.shiftwidth = 2
 vim.o.expandtab = true
 vim.o.smarttab = true
 vim.o.linebreak = true
+vim.o.conceallevel=2
+vim.o.showmode=false -- a status bar já mostra
+vim.o.inccommand='split' -- ver substituições possíveis enquanto digita, i guess
