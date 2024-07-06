@@ -13,7 +13,7 @@ vim.wo.signcolumn = 'yes' -- Keep signcolumn on by default
 -- O
 vim.o.hlsearch = false -- Highlight on search
 vim.o.mouse = '' -- No mouse mode
-vim.o.clipboard = 'unnamedplus' -- Sync clipboard between OS and Neovim.
+-- vim.o.clipboard = 'unnamedplus' -- Sync clipboard between OS and Neovim.
 vim.o.breakindent = true -- Enable break indent
 vim.o.undofile = true -- Save undo history
 vim.o.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
@@ -44,10 +44,24 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- Moving selected items according to indentation
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-vim.keymap.set("v", "//", "y/\\V<C-R>=escape(@\",'/\\')<CR><CR>")
+
+vim.keymap.set("v", "//", "y/\\V<C-R>=escape(@\",'/\\')<CR><CR>") -- não lembro
 
 vim.keymap.set("n", "<leader>wf", ":w<CR>", { desc = "[W]rite [F]ile" })
 vim.keymap.set("n", "<leader>wa", ":wa<CR>", { desc = "[W]rite [A]ll" })
+
+vim.keymap.set('n', '<leader>yy','"+yy', { desc = 'Yank line to clipboard' }) -- Yanking to clipboard
+vim.keymap.set('v', '<leader>y','"+y', { desc = 'Yank selection to clipboard' })
+
+vim.keymap.set('n', '<leader>p','"+p', { desc = 'Paste clipboard' }) -- pasting from clipboard
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
 
 -- LAZY PACKAGE MANAGER
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -161,9 +175,69 @@ require('lazy').setup({
   },
 
   {
-    'L3MON4D3/LuaSnip',
+    'VonHeikemen/lsp-zero.nvim',
+    branch = 'v1.x',
+    dependencies = {
+      -- LSP Support
+      'neovim/nvim-lspconfig',
+      { 'j-hui/fidget.nvim', opts = {}},
+      { 'folke/neodev.nvim', opts = {}},
+    },
     config = function()
+      local lsp_zero  = require("lsp-zero")
+      local lspconfig = require('lspconfig')
+
+      lsp_zero.on_attach(function(client, bufnr)
+        opts = { buffer = bufnr, remap = false }
+
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
+
+        vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
+        vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
+        vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
+        vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
+        vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
+      end)
+
+      lsp_zero.setup_servers { 'ruby_lsp', 'lua_ls', 'eslint', 'volar', 'tsserver' }
+      lsp_zero.format_on_save {
+        format_opts = {
+          async = false,
+          timeout_ms = 10000,
+        }, servers = {
+          ['eslint'] = { 'javascript' }
+        },
+      }
+    end
+  },
+
+  {
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      {
+        'L3MON4D3/LuaSnip',
+        dependencies = {
+          'rafamadriz/friendly-snippets',
+          config = function()
+            require('luasnip/loaders/from_vscode').load()
+          end
+        },
+      },
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-nvim-lua',
+      'saadparwaiz1/cmp_luasnip',
+    },
+    config = function()
+      local cmp = require('cmp')
+      local cmp_select = { behavior = cmp.SelectBehavior.Select }
       local luasnip = require('luasnip')
+      luasnip.config.setup({})
 
       local snippet = luasnip.snippet
       local text_node = luasnip.text_node
@@ -171,9 +245,6 @@ require('lazy').setup({
       local insert_node = luasnip.insert_node
       local fmt = require('luasnip.extras.fmt').fmt
       local rep = require('luasnip.extras').rep
-
-      luasnip.filetype_extend("ruby", {"rails"})
-      require("luasnip.loaders.from_vscode").lazy_load()
 
       vim.keymap.set({ 'i', 's' }, '<C-j>', function()
         if luasnip.expand_or_jumpable() then
@@ -280,89 +351,32 @@ require('lazy').setup({
           insert_node(7),
         }, { delimiters = '<>'})),
       })
-    end
-  },
 
-
-  {
-    'VonHeikemen/lsp-zero.nvim',
-    branch = 'v1.x',
-    dependencies = {
-      -- LSP Support
-      'neovim/nvim-lspconfig',
-
-      -- Autocompletion
-      'hrsh7th/nvim-cmp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
-      'saadparwaiz1/cmp_luasnip',
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-nvim-lua',
-
-      -- Snippets
-      'L3MON4D3/LuaSnip',
-      'rafamadriz/friendly-snippets',
-    },
-    config = function()
-      local lsp_zero  = require("lsp-zero")
-      local lspconfig = require('lspconfig')
-
-      lsp_zero.on_attach(function(client, bufnr)
-        opts = { buffer = bufnr, remap = false }
-
-        vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-        vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-        vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-        vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-
-        vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
-        vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-        vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-        vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
-        vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-        vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
-      end)
-
-      lsp_zero.setup_servers { 'ruby_lsp', 'lua_ls', 'eslint', 'volar', 'tsserver' }
-      lsp_zero.format_on_save {
-        format_opts = {
-          async = false,
-          timeout_ms = 10000,
-        }, servers = {
-          ['eslint'] = { 'javascript' }
-        },
-      }
-
-      local cmp       = require('cmp')
-      local cmp_select = { behavior = cmp.SelectBehavior.Select }
-      local cmp_action = lsp_zero.cmp_action()
-
-      require('luasnip.loaders.from_vscode').lazy_load()
-
+      luasnip.filetype_extend("ruby", {"rails"})
       cmp.setup({
-        sources = {
-          { name = 'nvim_lsp' },
-          { name = 'nvim_lua' },
-          { name = 'luasnip' },
-        },
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
         },
         mapping = cmp.mapping.preset.insert({
           ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
           ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
           ['<C-l>'] = cmp.mapping.confirm({ select = true }),
-          ['<Tab>'] = cmp_action.luasnip_supertab(),
-          ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
           ['<C-Space>'] = cmp.mapping.complete(), 
         }), 
-        snippet = {
-          expand = function(args)
-            require('luasnip').lsp_expand(args.body)
-          end,
+        sources = {
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+          { name = 'buffer' },
+          { name = 'path' },
+        },
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
         },
       })
+
     end
   },
 
@@ -436,7 +450,7 @@ require('lazy').setup({
     build = ':TSUpdate',
     config = function()
       require('nvim-treesitter.configs').setup {
-        ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim'},
+        ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'javascript' },
 
         sync_install = false,
         ignore_install = {},
@@ -527,6 +541,13 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
       vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+      vim.o.foldcolumn = '0'
+      vim.o.foldlevel = 99
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+      vim.o.foldmethod = 'expr'
+      vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+      vim.o.foldtext = ''
     end
   },
 
@@ -535,7 +556,15 @@ require('lazy').setup({
     config = function()
       require('mini.ai').setup { n_lines = 500 } -- arround/inside melhor
       require('mini.surround').setup{} -- adicionar/deletar/substituir surroundings
-      require('mini.statusline').setup { use_icons = vim.g.have_nerd_font }
+
+      local statusline = require('mini.statusline')
+      statusline.setup { use_icons = vim.g.have_nerd_font }
+      statusline.section_location = function()
+        return '%2l:%-2v'
+      end
     end
-  }
+  },
+
+  'folke/zen-mode.nvim',
 }, {})
+
