@@ -410,14 +410,22 @@ require('lazy').setup({
     end
   },
 
+  -- {
+  --   -- Theme inspired by Atom
+  --   'catppuccin/nvim',
+  --   name = 'catppuccin',
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme 'catppuccin-mocha'
+  --   end,
+  -- },
   {
-    -- Theme inspired by Atom
-    'catppuccin/nvim',
-    name = 'catppuccin',
+    'dasupradyumna/midnight.nvim',
+    lazy = false,
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'catppuccin-mocha'
-    end,
+      vim.cmd.colorscheme 'midnight'
+    end
   },
 
   -- "gc" to comment visual regions/lines
