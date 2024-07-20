@@ -77,6 +77,15 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+function get_current_vue_location()
+  local handle = io.popen('node -v')
+  local data = handle:read('*a')
+  handle:close()
+
+  local result = os.getenv('HOME') .. '/.asdf/installs/nodejs/' .. string.sub(data,2,-2) .. '/lib/node_modules/@vue/typescript-plugin'
+  return result
+end
+
 require('lazy').setup({
 
   'tpope/vim-rhubarb',
@@ -203,7 +212,19 @@ require('lazy').setup({
         vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
       end)
 
-      lsp_zero.setup_servers { 'ruby_lsp', 'lua_ls', 'eslint', 'volar', 'tsserver' }
+      lsp_zero.setup_servers { 'ruby_lsp', 'lua_ls', 'eslint', 'volar', 'gdscript' }
+      lspconfig.tsserver.setup {
+        init_options = {
+          plugins = {
+            {
+              name = '@vue/typescript-plugin',
+              location = get_current_vue_location(),
+              languages = {"javascript", "typescript", "vue"},
+            },
+          },
+        },
+        filetypes = { "javascript", "typescript", "vue"}
+      }
       lsp_zero.format_on_save {
         format_opts = {
           async = false,
@@ -364,6 +385,8 @@ require('lazy').setup({
           ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
           ['<C-l>'] = cmp.mapping.confirm({ select = true }),
           ['<C-Space>'] = cmp.mapping.complete(), 
+          ['<Tab>'] = nil,
+          ['<S-Tab>'] = nil,
         }), 
         sources = {
           { name = 'nvim_lsp' },
@@ -464,7 +487,7 @@ require('lazy').setup({
         ignore_install = {},
         modules = {},
 
-        auto_install = false,
+        auto_install = true,
 
         highlight = { enable = true, },
         -- indent = { enable = true },
