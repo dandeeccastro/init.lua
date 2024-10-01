@@ -88,11 +88,7 @@ end
 
 require('lazy').setup({
 
-  'tpope/vim-rhubarb',
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  'mattn/emmet-vim',
-  'nvim-tree/nvim-web-devicons',
-
+  -- ABSOLUTAMENTE NECESSÁRIOS
   {
     'tpope/vim-fugitive', -- Git related plugins
     config = function()
@@ -124,38 +120,6 @@ require('lazy').setup({
       })
     end
   },
-
-
-  {
-    'f-person/git-blame.nvim',
-    config = function()
-      require('gitblame').setup { enable = false }
-    end
-  },
-
-
-  {
-    'ThePrimeagen/Harpoon', -- Some QoL plugins
-    config = function()
-      local mark = require('harpoon.mark')
-      local ui = require('harpoon.ui')
-
-      vim.keymap.set('n', '<leader>ha', mark.add_file, { desc = "[Ha]rpoon file" })
-      vim.keymap.set('n', '<C-e>', ui.toggle_quick_menu, { desc = "[Harpoon] Menu" })
-
-      vim.keymap.set('n', '<C-h>', function() ui.nav_file(1) end, { desc = '[Harpoon] First file' })
-      vim.keymap.set('n', '<C-j>', function() ui.nav_file(2) end, { desc = '[Harpoon] Second file' })
-      vim.keymap.set('n', '<C-k>', function() ui.nav_file(3) end, { desc = '[Harpoon] Third file' })
-      vim.keymap.set('n', '<C-l>', function() ui.nav_file(4) end, { desc = '[Harpoon] Fourth file' })
-    end
-  },
-
-  {
-    'windwp/nvim-autopairs',
-    event = 'InsertEnter',
-    opts = {}
-  },
-
   {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v1.x',
@@ -169,35 +133,63 @@ require('lazy').setup({
       local lsp_zero  = require("lsp-zero")
       local lspconfig = require('lspconfig')
 
-      lsp_zero.on_attach(function(client, bufnr)
+      local lsp_attach = function(client, bufnr)
         opts = { buffer = bufnr, remap = false }
 
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
-        vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
+        lsp_zero.default_keymaps({ buffer = bufnr })
+        -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        -- vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+        -- vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        -- vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
+        -- vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
+        --
+        -- vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
+        -- vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
+        -- vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
+        -- vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
+        -- vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
+        -- vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
+      end
 
-        vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
-        vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
-        vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
-        vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
-        vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
-      end)
+      lsp_zero.extend_lspconfig({
+        sign_text = true,
+        lsp_attach = lsp_attach,
+        capabilities = require('cmp_nvim_lsp').default_capabilities(),
+      })
 
-      lsp_zero.setup_servers { 'ruby_lsp', 'lua_ls', 'eslint', 'volar', 'gdscript' }
-      lspconfig.tsserver.setup {
-        init_options = {
-          plugins = {
-            {
-              name = '@vue/typescript-plugin',
-              location = get_current_vue_location(),
-              languages = {"javascript", "typescript", "vue"},
-            },
-          },
-        },
-        filetypes = { "javascript", "typescript", "vue"}
+      lsp_zero.setup_servers {
+        'ruby_lsp',
+        'solargraph',
+
+        'lua_ls',
+
+        'jsonls',
+        'ts_ls',
+        'eslint',
+        'volar',
+        'emmet_ls',
+        'prismals',
+
+        'gdscript',
       }
+
+      lsp_zero.configure('tailwindcss', {
+        root_dir = function()
+          return lsp_zero.dir.find_first({'tailwind.config.js', 'tailwind.config.cjs', 'tailwind.config.mjs', 'tailwind.config.ts', 'postcss.config.js', 'postcss.config.cjs', 'postcss.config.mjs', 'postcss.config.ts'})
+        end
+      })
+      -- lspconfig.tsserver.setup {
+      --   init_options = {
+      --     plugins = {
+      --       {
+      --         name = '@vue/typescript-plugin',
+      --         location = get_current_vue_location(),
+      --         languages = {"javascript", "typescript", "vue"},
+      --       },
+      --     },
+      --   },
+      --   filetypes = { "javascript", "typescript", "vue"}
+      -- }
       lsp_zero.format_on_save {
         format_opts = {
           async = false,
@@ -208,18 +200,17 @@ require('lazy').setup({
       }
     end
   },
-
   {
     'hrsh7th/nvim-cmp',
     dependencies = {
       {
         'L3MON4D3/LuaSnip',
-        dependencies = {
-          'rafamadriz/friendly-snippets',
-          config = function()
-            require('luasnip/loaders/from_vscode').load()
-          end
-        },
+        -- dependencies = {
+        --   'rafamadriz/friendly-snippets',
+        --   config = function()
+        --     require('luasnip/loaders/from_vscode').load()
+        --   end
+        -- },
       },
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
@@ -375,59 +366,6 @@ require('lazy').setup({
 
     end
   },
-
-  -- Useful plugin to show you pending keybinds.
-  {
-    'folke/which-key.nvim',
-    init = function()
-      vim.o.timeout = true
-      vim.o.timeoutlen = 300
-    end
-  },
-
-  {
-    -- Adds git releated signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    config = function()
-      require('gitsigns').setup {
-        signs = {
-          add = { text = '+' },
-          change = { text = '~' },
-          delete = { text = '_' },
-          topdelete = { text = '‾' },
-          changedelete = { text = '~' },
-        },
-        on_attach = function(bufnr)
-          vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
-          vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
-          vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
-        end,
-      }
-    end
-  },
-
-  -- {
-  --   -- Theme inspired by Atom
-  --   'catppuccin/nvim',
-  --   name = 'catppuccin',
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd.colorscheme 'catppuccin-mocha'
-  --   end,
-  -- },
-  {
-    'dasupradyumna/midnight.nvim',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'midnight'
-    end
-  },
-
-  -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
-
-  -- Fuzzy Finder (files, lsp, etc)
   {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
@@ -463,7 +401,7 @@ require('lazy').setup({
         auto_install = true,
 
         highlight = { enable = true, },
-        -- indent = { enable = true },
+        indent = { enable = true },
         incremental_selection = {
           enable = true,
           keymaps = {
@@ -554,12 +492,21 @@ require('lazy').setup({
       vim.o.foldtext = ''
     end
   },
-
   {
     'echasnovski/mini.nvim',
     config = function()
       require('mini.ai').setup { n_lines = 500 } -- arround/inside melhor
       require('mini.surround').setup{} -- adicionar/deletar/substituir surroundings
+      require('mini.comment').setup{}
+      require('mini.pairs').setup{}
+      require('mini.files').setup{}
+      require('mini.diff').setup{}
+      vim.keymap.set('n', '<leader>ff', MiniFiles.open, { desc = '[FF]ile' })
+      -- require('mini.base16').setup{
+      --   config = function()
+      --     vim.cmd.colorscheme 'minischeme'
+      --   end
+      -- }
 
       local statusline = require('mini.statusline')
       statusline.setup { use_icons = vim.g.have_nerd_font }
@@ -569,5 +516,97 @@ require('lazy').setup({
     end
   },
 
-  'folke/zen-mode.nvim',
+  -- NICE TO HAVE
+  {
+    'f-person/git-blame.nvim',
+    config = function()
+      require('gitblame').setup { opts = { enabled = false } }
+    end
+  },
+  {
+    'ThePrimeagen/Harpoon', -- Some QoL plugins
+    config = function()
+      local mark = require('harpoon.mark')
+      local ui = require('harpoon.ui')
+
+      vim.keymap.set('n', '<leader>ha', mark.add_file, { desc = "[Ha]rpoon file" })
+      vim.keymap.set('n', '<C-e>', ui.toggle_quick_menu, { desc = "[Harpoon] Menu" })
+
+      vim.keymap.set('n', '<C-h>', function() ui.nav_file(1) end, { desc = '[Harpoon] First file' })
+      vim.keymap.set('n', '<C-j>', function() ui.nav_file(2) end, { desc = '[Harpoon] Second file' })
+      vim.keymap.set('n', '<C-k>', function() ui.nav_file(3) end, { desc = '[Harpoon] Third file' })
+      vim.keymap.set('n', '<C-l>', function() ui.nav_file(4) end, { desc = '[Harpoon] Fourth file' })
+    end
+  },
+  -- {
+  --   'windwp/nvim-autopairs',
+  --   event = 'InsertEnter',
+  --   opts = {}
+  -- },
+  {
+    'folke/which-key.nvim',
+    init = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+    end
+  },
+  -- {
+  --   -- Adds git releated signs to the gutter, as well as utilities for managing changes
+  --   'lewis6991/gitsigns.nvim',
+  --   config = function()
+  --     require('gitsigns').setup {
+  --       signs = {
+  --         add = { text = '+' },
+  --         change = { text = '~' },
+  --         delete = { text = '_' },
+  --         topdelete = { text = '‾' },
+  --         changedelete = { text = '~' },
+  --       },
+  --       on_attach = function(bufnr)
+  --         vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
+  --         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
+  --         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
+  --       end,
+  --     }
+  --   end
+  -- },
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    config = function()
+      require('treesitter-context').setup{}
+    end
+  },
+  'tpope/vim-rhubarb',
+  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+
+  -- AESTHETICS
+  {
+    'folke/tokyonight.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme 'tokyonight-night'
+    end
+  },
+  -- {
+  --   -- Theme inspired by Atom
+  --   'catppuccin/nvim',
+  --   name = 'catppuccin',
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme 'catppuccin-mocha'
+  --   end,
+  -- },
+  -- {
+  --     "lukas-reineke/indent-blankline.nvim",
+  --     main = "ibl",
+  --     ---@module "ibl"
+  --     ---@type ibl.config
+  --     opts = {},
+  --     config = function()
+  --       require('ibl').setup{}
+  --     end
+  -- },
+  'nvim-tree/nvim-web-devicons',
+
 }, {})
