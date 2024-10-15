@@ -195,7 +195,8 @@ require('lazy').setup({
           async = false,
           timeout_ms = 10000,
         }, servers = {
-          ['eslint'] = { 'javascript' }
+          ['eslint'] = { 'javascript' },
+          ['ruby_lsp'] = {'ruby'},
         },
       }
     end
@@ -348,8 +349,8 @@ require('lazy').setup({
           ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
           ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
           ['<C-l>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = cmp.mapping.confirm({ select = true }),
           ['<C-Space>'] = cmp.mapping.complete(), 
-          ['<Tab>'] = nil,
           ['<S-Tab>'] = nil,
         }), 
         sources = {
@@ -497,7 +498,7 @@ require('lazy').setup({
     config = function()
       require('mini.ai').setup { n_lines = 500 } -- arround/inside melhor
       require('mini.surround').setup{} -- adicionar/deletar/substituir surroundings
-      require('mini.comment').setup{}
+      -- require('mini.comment').setup{}
       require('mini.pairs').setup{}
       require('mini.files').setup{}
       require('mini.diff').setup{}
@@ -508,11 +509,11 @@ require('lazy').setup({
       --   end
       -- }
 
-      local statusline = require('mini.statusline')
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      -- local statusline = require('mini.statusline')
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- statusline.section_location = function()
+      --   return '%2l:%-2v'
+      -- end
     end
   },
 
@@ -570,43 +571,50 @@ require('lazy').setup({
   --     }
   --   end
   -- },
-  {
-    'nvim-treesitter/nvim-treesitter-context',
-    config = function()
-      require('treesitter-context').setup{}
-    end
-  },
+  -- {
+  --   'nvim-treesitter/nvim-treesitter-context',
+  --   config = function()
+  --     require('treesitter-context').setup{}
+  --   end
+  -- },
   'tpope/vim-rhubarb',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- AESTHETICS
-  {
-    'folke/tokyonight.nvim',
-    lazy = false,
+  { 
+    "catppuccin/nvim", 
+    name = "catppuccin", 
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'catppuccin-mocha'
     end
   },
-  -- {
-  --   -- Theme inspired by Atom
-  --   'catppuccin/nvim',
-  --   name = 'catppuccin',
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd.colorscheme 'catppuccin-mocha'
-  --   end,
-  -- },
-  -- {
-  --     "lukas-reineke/indent-blankline.nvim",
-  --     main = "ibl",
-  --     ---@module "ibl"
-  --     ---@type ibl.config
-  --     opts = {},
-  --     config = function()
-  --       require('ibl').setup{}
-  --     end
-  -- },
   'nvim-tree/nvim-web-devicons',
+
+  -- TESTING
+  {
+    'numToStr/Comment.nvim',
+    config = function()
+      require('Comment').setup {}
+    end
+  }
+  -- {
+  --   'LunarVim/breadcrumbs.nvim',
+  --   dependencies = {
+  --     { 
+  --       'SmiteshP/nvim-navic',
+  --       config = function()
+  --         require('nvim-navic').setup {
+  --           lsp = {
+  --             auto_attach = true,
+  --           }
+  --         }
+  --       end
+  --     },
+  --   },
+  --   config = function()
+  --     require('breadcrumbs').setup()
+  --   end
+  -- }
 
 }, {})
