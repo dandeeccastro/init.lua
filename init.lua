@@ -509,11 +509,11 @@ require('lazy').setup({
       --   end
       -- }
 
-      -- local statusline = require('mini.statusline')
-      -- statusline.setup { use_icons = vim.g.have_nerd_font }
-      -- statusline.section_location = function()
-      --   return '%2l:%-2v'
-      -- end
+      local statusline = require('mini.statusline')
+      statusline.setup { use_icons = vim.g.have_nerd_font }
+      statusline.section_location = function()
+        return '%2l:%-2v'
+      end
     end
   },
 
@@ -582,13 +582,13 @@ require('lazy').setup({
 
   -- AESTHETICS
   { 
-    "catppuccin/nvim", 
-    name = "catppuccin", 
-    priority = 1000,
+    'ellisonleao/gruvbox.nvim',
+    priority = 1000, 
     config = function()
-      vim.cmd.colorscheme 'catppuccin-mocha'
+      vim.cmd.colorscheme 'gruvbox'
     end
   },
+
   'nvim-tree/nvim-web-devicons',
 
   -- TESTING
