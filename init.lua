@@ -44,7 +44,8 @@ require('lazy').setup({
   'folke/which-key.nvim',
   'tpope/vim-rhubarb',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  'ellisonleao/gruvbox.nvim',
+  -- 'Shatur/neovim-ayu',
+  'rose-pine/neovim',
   'nvim-tree/nvim-web-devicons',
   'numToStr/Comment.nvim',
   {
@@ -59,6 +60,7 @@ require('lazy').setup({
       }
     }
   },
+  'nvim-lualine/lualine.nvim',
 }, {})
 
 -- SETTING STUFF
@@ -165,8 +167,30 @@ local lsp_zero  = require("lsp-zero")
 local lspconfig = require('lspconfig')
 
 local lsp_attach = function(client, bufnr)
-  opts = { buffer = bufnr, remap = false }
-  lsp_zero.default_keymaps({ buffer = bufnr })
+  vim.keymap.set("n", "gd", require('telescope.builtin').lsp_definitions, { buffer = bufnr, remap = false, desc = 'LSP: Go to definitions' })
+  vim.keymap.set("n", "gr", require('telescope.builtin').lsp_references, { buffer = bufnr, remap = false, desc = 'LSP: Go to references' })
+  vim.keymap.set("n", "gI", require('telescope.builtin').lsp_implementations, { buffer = bufnr, remap = false, desc = 'LSP: Go to implementations' })
+
+  vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = bufnr, remap = false, desc = 'LSP: Go to declaration' })
+  vim.keymap.set("n", '<leader>D', require('telescope.builtin').lsp_type_definitions, { buffer = bufnr, remap = false, desc = 'LSP: type definitions' })
+  vim.keymap.set("n", '<leader>ds', require('telescope.builtin').lsp_document_symbols, { buffer = bufnr, remap = false, desc = 'LSP: document symbols' })
+  vim.keymap.set("n", '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { buffer = bufnr, remap = false, desc = 'LSP: workspace symbols' })
+  vim.keymap.set("n", '<leader>rn', vim.lsp.buf.rename, { buffer = bufnr, remap = false, desc = 'LSP: rename' })
+  vim.keymap.set("n", '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr, remap = false, desc = 'LSP: code action' })
+
+  vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr, remap = false, desc = 'LSP: hover' })
+  vim.keymap.set("n", "[d", vim.diagnostic.goto_next, { buffer = bufnr, remap = false, desc = 'LSP: go to next diagnostic' })
+  vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, { buffer = bufnr, remap = false, desc = 'LSP: go to prev diagnostic' })
+
+  -- opts = { buffer = bufnr, remap = false }
+  -- lsp_zero.default_keymaps({ buffer = bufnr })
+
+  -- vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
+  -- vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
+  -- vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
+  -- vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
+  -- vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
+  -- vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
 end
 
 lsp_zero.extend_lspconfig({
@@ -409,6 +433,8 @@ vim.o.foldmethod = 'expr'
 vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.o.foldtext = ''
 
+vim.o.colorcolumn = '100'
+
 require('mini.ai').setup { n_lines = 500 } -- arround/inside melhor
 require('mini.surround').setup{} -- adicionar/deletar/substituir surroundings
 require('mini.pairs').setup{}
@@ -440,6 +466,12 @@ vim.keymap.set('n', '<C-l>', function() ui.nav_file(4) end, { desc = '[Harpoon] 
 vim.o.timeout = true
 vim.o.timeoutlen = 300
 
-vim.cmd.colorscheme 'gruvbox'
+vim.cmd("colorscheme rose-pine")
 
 require('Comment').setup {}
+
+require('lualine').setup {
+  options = {
+    theme = 'ayu'
+  }
+}
