@@ -16,17 +16,24 @@ require('lazy').setup({
 
   -- ABSOLUTAMENTE NECESSÁRIOS
   'tpope/vim-fugitive', -- Git related plugins
-  'VonHeikemen/lsp-zero.nvim',
+
+  -- 'VonHeikemen/lsp-zero.nvim',
+  'mason-org/mason.nvim',
+  'mason-org/mason-lspconfig.nvim',
   'neovim/nvim-lspconfig',
+
+  { 'saghen/blink.cmp', version = '1.*' ,opts = { keymap = { preset = 'super-tab'}}},
+
   { 'j-hui/fidget.nvim', opts = {}},
-  { 'folke/neodev.nvim', opts = {}},
-  'hrsh7th/nvim-cmp',
-  'L3MON4D3/LuaSnip',
-  'hrsh7th/cmp-buffer',
-  'hrsh7th/cmp-path',
-  'hrsh7th/cmp-nvim-lsp',
-  'hrsh7th/cmp-nvim-lua',
-  'saadparwaiz1/cmp_luasnip',
+  -- { 'folke/neodev.nvim', opts = {}},
+  { 'folke/lazydev.nvim', opts = {}},
+  -- 'hrsh7th/nvim-cmp',
+  -- 'L3MON4D3/LuaSnip',
+  -- 'hrsh7th/cmp-buffer',
+  -- 'hrsh7th/cmp-path',
+  -- 'hrsh7th/cmp-nvim-lsp',
+  -- 'hrsh7th/cmp-nvim-lua',
+  -- 'saadparwaiz1/cmp_luasnip',
   'nvim-telescope/telescope.nvim',
   'nvim-lua/plenary.nvim',
   {
@@ -163,8 +170,26 @@ autocmd("BufWinEnter", {
   end,
 })
 
-local lsp_zero  = require("lsp-zero")
+-- local lsp_zero  = require("lsp-zero")
 local lspconfig = require('lspconfig')
+require('mason').setup()
+require('mason-lspconfig').setup()
+
+vim.lsp.config('tailwindcss', {
+  settings = {
+    ['tailwindCSS'] = {
+      includeLanguages = {
+        vue = 'html'
+
+          -- eelixir = "html-eex",
+          -- eruby = "erb",
+          -- htmlangular = "html",
+          -- templ = "html"
+      }
+    },
+  },
+})
+
 
 local lsp_attach = function(client, bufnr)
   vim.keymap.set("n", "gd", require('telescope.builtin').lsp_definitions, { buffer = bufnr, remap = false, desc = 'LSP: Go to definitions' })
@@ -193,187 +218,188 @@ local lsp_attach = function(client, bufnr)
   -- vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
 end
 
-lsp_zero.extend_lspconfig({
-  sign_text = true,
-  lsp_attach = lsp_attach,
-  capabilities = require('cmp_nvim_lsp').default_capabilities(),
-})
+-- lsp_zero.extend_lspconfig({
+--   sign_text = true,
+--   lsp_attach = lsp_attach,
+--   capabilities = require('cmp_nvim_lsp').default_capabilities(),
+-- })
+--
+-- lsp_zero.setup_servers {
+--   'ruby_lsp',
+--
+--   'lua_ls',
+--
+--   'jsonls',
+--   'ts_ls',
+--   'eslint',
+--   'volar',
+--   -- 'emmet_ls',
+--   'emmet_language_server',
+--   'prismals',
+--
+--   'gdscript',
+-- }
+--
+-- lsp_zero.configure('tailwindcss', {
+--   root_dir = function()
+--     return lsp_zero.dir.find_first({'tailwind.config.js', 'tailwind.config.cjs', 'tailwind.config.mjs', 'tailwind.config.ts', 'postcss.config.js', 'postcss.config.cjs', 'postcss.config.mjs', 'postcss.config.ts'})
+--   end
+-- })
+--
+-- lsp_zero.format_on_save {
+--   format_opts = {
+--     async = false,
+--     timeout_ms = 10000,
+--   }, servers = {
+--     ['eslint'] = { 'javascript', 'typescript', 'typescriptreact' },
+--     ['ruby_lsp'] = {'ruby'},
+--   },
+-- }
 
-lsp_zero.setup_servers {
-  'ruby_lsp',
-
-  'lua_ls',
-
-  'jsonls',
-  'ts_ls',
-  'eslint',
-  'volar',
-  'emmet_ls',
-  'prismals',
-
-  'gdscript',
-}
-
-lsp_zero.configure('tailwindcss', {
-  root_dir = function()
-    return lsp_zero.dir.find_first({'tailwind.config.js', 'tailwind.config.cjs', 'tailwind.config.mjs', 'tailwind.config.ts', 'postcss.config.js', 'postcss.config.cjs', 'postcss.config.mjs', 'postcss.config.ts'})
-  end
-})
-
-lsp_zero.format_on_save {
-  format_opts = {
-    async = false,
-    timeout_ms = 10000,
-  }, servers = {
-    ['eslint'] = { 'javascript', 'typescript', 'typescriptreact' },
-    ['ruby_lsp'] = {'ruby'},
-  },
-}
-
-local cmp = require('cmp')
-local cmp_select = { behavior = cmp.SelectBehavior.Select }
-local luasnip = require('luasnip')
-luasnip.config.setup({})
-
-local snippet = luasnip.snippet
-local text_node = luasnip.text_node
-local choice_node = luasnip.choice_node
-local insert_node = luasnip.insert_node
-local fmt = require('luasnip.extras.fmt').fmt
-local rep = require('luasnip.extras').rep
-
-vim.keymap.set({ 'i', 's' }, '<C-j>', function()
-  if luasnip.expand_or_jumpable() then
-    luasnip.expand_or_jump()
-  end
-end, { silent = true})
-
-vim.keymap.set({ 'i', 's' }, '<C-k>', function()
-  if luasnip.jumpable(-1) then
-    luasnip.jump(-1)
-  end
-end, { silent = true})
-
-vim.keymap.set({ 'i', 's' }, '<C-n>', function()
-  if luasnip.choice_active() then
-    luasnip.change_choice(1)
-  end
-end)
-
-luasnip.add_snippets('javascript', {
-  snippet('plghandle', fmt([[
-        exports.handle = async (plg, event) => {
-          []
-        };
-        ]], { insert_node(1) }, { delimiters = '[]'})),
-
-  snippet('plgaxios', fmt([[
-        plg.axios({
-          method: '[]',
-          url: `${event.meta.baseURI}/[]`,
-          params: {[]},
-          data: {[]},
-        });
-        ]], { choice_node(1, {
-      text_node("GET"),
-      text_node("POST"),
-      text_node("PUT"),
-      text_node("DELETE"),
-      text_node("OPTIONS"),
-    }), insert_node(2), insert_node(3), insert_node(4)  },
-    { delimiters = '[]'})),
-
-  snippet('plgtest', fmt([[
-        const plg = require('pluga-plg');
-        const { expect } = require('chai');
-
-        const [] = require('../../lib/[]s/[]');
-
-        const event = {
-          meta: {
-            baseURI: process.env.BASE_URI,
-          },
-          auth: {
-            access_token: process.env.ACCESS_TOKEN,
-          },
-          input: {[]},
-        };
-
-        describe('[]', () => {
-          []
-        })
-        ]], {
-      choice_node(1, {
-        text_node('trigger'),
-        text_node('action'),
-      }),
-      rep(1),
-      insert_node(2),
-      insert_node(3),
-      insert_node(4),
-      insert_node(5),
-    }, { delimiters = '[]'})),
-
-  snippet('plgmeta', fmt([[
-        exports.metaConfig = {
-          name: {
-            pt_BR: '<>',
-            en: '<>',
-          },
-          description: {
-            pt_BR: '<>',
-            en: '<>',
-          },
-          configuration_fields: {
-            <>
-          },
-          <>_fields: {
-            type: 'local',
-            fields: [
-            <>
-            ],
-          },
-        };
-        ]], {
-      insert_node(1),
-      insert_node(2),
-      insert_node(3),
-      insert_node(4),
-      insert_node(5),
-      choice_node(6, {
-        text_node('trigger'),
-        text_node('action'),
-      }),
-      insert_node(7),
-    }, { delimiters = '<>'})),
-})
-
-luasnip.filetype_extend("ruby", {"rails"})
-cmp.setup({
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
-  },
-  mapping = cmp.mapping.preset.insert({
-    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-l>'] = cmp.mapping.confirm({ select = true }),
-    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
-    ['<C-Space>'] = cmp.mapping.complete(), 
-    ['<S-Tab>'] = nil,
-  }), 
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-    { name = 'buffer' },
-    { name = 'path' },
-  },
-  window = {
-    completion = cmp.config.window.bordered(),
-    documentation = cmp.config.window.bordered(),
-  },
-})
+-- local cmp = require('cmp')
+-- local cmp_select = { behavior = cmp.SelectBehavior.Select }
+-- local luasnip = require('luasnip')
+-- luasnip.config.setup({})
+--
+-- local snippet = luasnip.snippet
+-- local text_node = luasnip.text_node
+-- local choice_node = luasnip.choice_node
+-- local insert_node = luasnip.insert_node
+-- local fmt = require('luasnip.extras.fmt').fmt
+-- local rep = require('luasnip.extras').rep
+--
+-- vim.keymap.set({ 'i', 's' }, '<C-j>', function()
+--   if luasnip.expand_or_jumpable() then
+--     luasnip.expand_or_jump()
+--   end
+-- end, { silent = true})
+--
+-- vim.keymap.set({ 'i', 's' }, '<C-k>', function()
+--   if luasnip.jumpable(-1) then
+--     luasnip.jump(-1)
+--   end
+-- end, { silent = true})
+--
+-- vim.keymap.set({ 'i', 's' }, '<C-n>', function()
+--   if luasnip.choice_active() then
+--     luasnip.change_choice(1)
+--   end
+-- end)
+--
+-- luasnip.add_snippets('javascript', {
+--   snippet('plghandle', fmt([[
+--         exports.handle = async (plg, event) => {
+--           []
+--         };
+--         ]], { insert_node(1) }, { delimiters = '[]'})),
+--
+--   snippet('plgaxios', fmt([[
+--         plg.axios({
+--           method: '[]',
+--           url: `${event.meta.baseURI}/[]`,
+--           params: {[]},
+--           data: {[]},
+--         });
+--         ]], { choice_node(1, {
+--       text_node("GET"),
+--       text_node("POST"),
+--       text_node("PUT"),
+--       text_node("DELETE"),
+--       text_node("OPTIONS"),
+--     }), insert_node(2), insert_node(3), insert_node(4)  },
+--     { delimiters = '[]'})),
+--
+--   snippet('plgtest', fmt([[
+--         const plg = require('pluga-plg');
+--         const { expect } = require('chai');
+--
+--         const [] = require('../../lib/[]s/[]');
+--
+--         const event = {
+--           meta: {
+--             baseURI: process.env.BASE_URI,
+--           },
+--           auth: {
+--             access_token: process.env.ACCESS_TOKEN,
+--           },
+--           input: {[]},
+--         };
+--
+--         describe('[]', () => {
+--           []
+--         })
+--         ]], {
+--       choice_node(1, {
+--         text_node('trigger'),
+--         text_node('action'),
+--       }),
+--       rep(1),
+--       insert_node(2),
+--       insert_node(3),
+--       insert_node(4),
+--       insert_node(5),
+--     }, { delimiters = '[]'})),
+--
+--   snippet('plgmeta', fmt([[
+--         exports.metaConfig = {
+--           name: {
+--             pt_BR: '<>',
+--             en: '<>',
+--           },
+--           description: {
+--             pt_BR: '<>',
+--             en: '<>',
+--           },
+--           configuration_fields: {
+--             <>
+--           },
+--           <>_fields: {
+--             type: 'local',
+--             fields: [
+--             <>
+--             ],
+--           },
+--         };
+--         ]], {
+--       insert_node(1),
+--       insert_node(2),
+--       insert_node(3),
+--       insert_node(4),
+--       insert_node(5),
+--       choice_node(6, {
+--         text_node('trigger'),
+--         text_node('action'),
+--       }),
+--       insert_node(7),
+--     }, { delimiters = '<>'})),
+-- })
+--
+-- luasnip.filetype_extend("ruby", {"rails"})
+-- cmp.setup({
+--   snippet = {
+--     expand = function(args)
+--       luasnip.lsp_expand(args.body)
+--     end,
+--   },
+--   mapping = cmp.mapping.preset.insert({
+--     ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+--     ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+--     ['<C-l>'] = cmp.mapping.confirm({ select = true }),
+--     ['<Tab>'] = cmp.mapping.confirm({ select = true }),
+--     ['<C-Space>'] = cmp.mapping.complete(), 
+--     ['<S-Tab>'] = nil,
+--   }), 
+--   sources = {
+--     { name = 'nvim_lsp' },
+--     { name = 'luasnip' },
+--     { name = 'buffer' },
+--     { name = 'path' },
+--   },
+--   window = {
+--     completion = cmp.config.window.bordered(),
+--     documentation = cmp.config.window.bordered(),
+--   },
+-- })
 
 require('nvim-treesitter.configs').setup {
   ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'javascript' },
@@ -439,7 +465,12 @@ require('mini.ai').setup { n_lines = 500 } -- arround/inside melhor
 require('mini.surround').setup{} -- adicionar/deletar/substituir surroundings
 require('mini.pairs').setup{}
 require('mini.files').setup{}
+-- require('mini.icons').setup({})
+-- require('mini.snippets').setup({})
+-- require('mini.completion').setup({ lsp_completion = { source_func = 'omnifunc' }})
 -- require('mini.diff').setup{}
+
+require('blink.cmp').setup()
 
 vim.keymap.set('n', '<leader>ff', MiniFiles.open, { desc = '[FF]ile' })
 
