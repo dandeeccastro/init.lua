@@ -2,13 +2,15 @@ return {
         "neovim/nvim-lspconfig",
         dependencies = {
                 -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-                { "mason-org/mason.nvim", opts = {} },
-                "mason-org/mason-lspconfig.nvim",
-                "WhoIsSethDaniel/mason-tool-installer.nvim",
+                --
+                -- { "mason-org/mason.nvim", opts = {} },
+                -- "mason-org/mason-lspconfig.nvim",
+                -- "WhoIsSethDaniel/mason-tool-installer.nvim",
 
-                { "j-hui/fidget.nvim",    opts = {} },
+                { "j-hui/fidget.nvim", opts = {} },
 
                 "saghen/blink.cmp",
+                'Hoffs/omnisharp-extended-lsp.nvim',
         },
         config = function()
                 vim.api.nvim_create_autocmd("LspAttach", {
@@ -165,7 +167,37 @@ return {
                         -- But for many setups, the LSP (`ts_ls`) will work just fine
                         -- ts_ls = {},
                         --
+                        --
 
+                        -- Godot
+                        gdscript = {},
+
+                        -- Ruby
+                        ruby_lsp = {},
+                        solargraph = {},
+                        --
+                        omnisharp = {
+                                settings = {
+                                        handlers = {
+                                                ["textDocument/definition"] = require("omnisharp_extended").handler,
+                                        },
+                                        msbuild = {
+                                                loadProjectsOnDemand = false,
+                                        },
+                                        FormattingOptions = {
+                                                EnableEditorConfigSupport = true,
+                                                OrganizeImports = true,
+                                        },
+                                        RoslynExtensionOptions = {
+                                                enableImportCompletion = true,
+                                        },
+                                }
+                        },
+
+                        -- Typescript
+                        ts_ls = {},
+
+                        -- Lua
                         lua_ls = {
                                 -- cmd = { ... },
                                 -- filetypes = { ... },
@@ -199,22 +231,31 @@ return {
                 vim.list_extend(ensure_installed, {
                         "stylua", -- Used to format Lua code
                 })
-                require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-                require("mason-lspconfig").setup({
-                        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-                        automatic_installation = false,
-                        handlers = {
-                                function(server_name)
-                                        local server = servers[server_name] or {}
-                                        -- This handles overriding only values explicitly passed
-                                        -- by the server configuration above. Useful when disabling
-                                        -- certain features of an LSP (for example, turning off formatting for ts_ls)
-                                        server.capabilities = vim.tbl_deep_extend("force", {}, capabilities,
-                                                server.capabilities or {})
-                                        require("lspconfig")[server_name].setup(server)
-                                end,
-                        },
-                })
+                -- GDScript configuration separate
+                for server, settings in pairs(servers) do
+                        settings.capabilities = vim.tbl_deep_extend("force", {}, capabilities,
+                                settings.capabilities or {})
+                        vim.lsp.config(server, settings)
+                        vim.lsp.enable(server);
+                end
+
+                -- require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+                --
+                -- require("mason-lspconfig").setup({
+                --         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+                --         automatic_installation = false,
+                --         handlers = {
+                --                 function(server_name)
+                --                         local server = servers[server_name] or {}
+                --                         -- This handles overriding only values explicitly passed
+                --                         -- by the server configuration above. Useful when disabling
+                --                         -- certain features of an LSP (for example, turning off formatting for ts_ls)
+                --                         server.capabilities = vim.tbl_deep_extend("force", {}, capabilities,
+                --                                 server.capabilities or {})
+                --                         require("lspconfig")[server_name].setup(server)
+                --                 end,
+                --         },
+                -- })
         end,
 }
