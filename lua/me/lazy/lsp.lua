@@ -174,8 +174,10 @@ return {
 
                         -- Ruby
                         ruby_lsp = {},
+                        rubocop = {},
                         solargraph = {},
-                        --
+
+                        -- C#
                         omnisharp = {
                                 settings = {
                                         handlers = {
@@ -212,6 +214,8 @@ return {
                                         },
                                 },
                         },
+
+                        tailwindcss = {},
                 }
 
                 -- Ensure the servers and tools above are installed

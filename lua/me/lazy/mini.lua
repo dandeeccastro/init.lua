@@ -36,7 +36,10 @@ return { -- Collection of various small independent plugins/modules
                         return "%2l:%-2v"
                 end
 
-                -- ... and there is more!
-                --  Check out: https://github.com/echasnovski/mini.nvim
+                require('mini.files').setup()
+
+                vim.keymap.set('n', "<leader>df", MiniFiles.open, { desc = "[F]ile manager" })
+
+                require('mini.indentscope').setup()
         end,
 }
