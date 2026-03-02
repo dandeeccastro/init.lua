@@ -15,3 +15,5 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set('i', 'kj', '<ESC>')
 vim.keymap.set("n", "<leader>wf", ":w<CR>", { desc = "[W]rite [F]ile" })
 vim.keymap.set("n", "<leader>wa", ":wa<CR>", { desc = "[W]rite [A]ll" })
+
+vim.keymap.set('n', '<leader>ff', ":Ex<CR>", { desc = "netrw" })
