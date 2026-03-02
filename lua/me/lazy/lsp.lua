@@ -173,8 +173,8 @@ return {
                         gdscript = {},
 
                         -- Ruby
-                        ruby_lsp = {},
-                        rubocop = {},
+                        -- ruby_lsp = {},
+                        -- rubocop = {},
                         solargraph = {},
 
                         -- C#
