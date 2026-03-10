@@ -17,3 +17,11 @@ vim.keymap.set("n", "<leader>wf", ":w<CR>", { desc = "[W]rite [F]ile" })
 vim.keymap.set("n", "<leader>wa", ":wa<CR>", { desc = "[W]rite [A]ll" })
 
 vim.keymap.set('n', '<leader>ff', ":Ex<CR>", { desc = "netrw" })
+
+vim.keymap.set('n', '<leader>yf', function() vim.fn.setreg("+", vim.fn.expand("%")) end,
+        { desc = "Copy file path to clipboard" })
+
+vim.keymap.set('n', '<leader>yl', function()
+    local value = vim.fn.expand("%") .. ":" .. vim.fn.line(".")
+    vim.fn.setreg("+", value)
+end, { desc = "Copy file path and line to clipboard" })

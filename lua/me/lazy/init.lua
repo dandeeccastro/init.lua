@@ -6,24 +6,14 @@ return {
                 opts = { signs = false },
         },
         {
-                "NeogitOrg/neogit",
-                lazy = true,
-                dependencies = {
-                        "nvim-lua/plenary.nvim",         -- required
+                'tanvirtin/vgit.nvim',
+                dependencies = { 'nvim-lua/plenary.nvim', 'nvim-tree/nvim-web-devicons' },
+                event = 'VimEnter',
+                config = function()
+                        require('vgit').setup()
 
-                        -- Only one of these is needed.
-                        "sindrets/diffview.nvim",        -- optional
-                        -- "esmuellert/codediff.nvim",      -- optional
-
-                        -- Only one of these is needed.
-                        "nvim-telescope/telescope.nvim", -- optional
-                        -- "ibhagwan/fzf-lua",              -- optional
-                        -- "nvim-mini/mini.pick",           -- optional
-                        -- "folke/snacks.nvim",             -- optional
-                },
-                cmd = "Neogit",
-                keys = {
-                        { "<leader>gg", "<cmd>Neogit<cr>", desc = "Show Neogit UI" }
-                }
+                        vim.keymap.set("n", "<leader>gg", ":VGit project_commit_preview<CR>",
+                                { desc = "Project commit preview" })
+                end,
         }
 }

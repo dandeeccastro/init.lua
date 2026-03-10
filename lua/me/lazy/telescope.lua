@@ -3,6 +3,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
         event = "VimEnter",
         dependencies = {
                 "nvim-lua/plenary.nvim",
+                { "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0" },
                 { -- If encountering errors, see telescope-fzf-native README for installation instructions
                         "nvim-telescope/telescope-fzf-native.nvim",
 
@@ -19,7 +20,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
                 { "nvim-telescope/telescope-ui-select.nvim" },
 
                 -- Useful for getting pretty icons, but requires a Nerd Font.
-                { "nvim-tree/nvim-web-devicons",            enabled = vim.g.have_nerd_font },
+                { "nvim-tree/nvim-web-devicons",                  enabled = vim.g.have_nerd_font },
         },
         config = function()
                 -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -44,7 +45,10 @@ return { -- Fuzzy Finder (files, lsp, etc)
                 -- [[ Configure Telescope ]]
                 -- See `:help telescope` and `:help telescope.setup()`
                 local themes = require('telescope.themes')
-                require("telescope").setup({
+                local telescope = require("telescope")
+                local lga_actions = require("telescope-live-grep-args.actions")
+
+                telescope.setup({
                         -- You can put your default mappings / updates / etc. in here
                         --  All the info you're looking for is in `:help telescope.setup()`
                         --
@@ -54,27 +58,61 @@ return { -- Fuzzy Finder (files, lsp, etc)
                         --   },
                         -- },
                         -- pickers = {}
+                        defaults = {
+                                mappings = {
+                                        n = {
+                                                ['<C-j>'] = require('telescope.actions').cycle_history_next,
+                                                ['<C-k>'] = require('telescope.actions').cycle_history_prev,
+                                        }
+                                },
+                                path_display = { "truncate" }
+                        },
                         extensions = {
                                 ["ui-select"] = {
                                         require("telescope.themes").get_dropdown(),
                                 },
+                                live_grep_args = {
+                                        auto_quoting = true,
+                                        theme = 'ivy',
+                                        mappings = { -- extend mappings
+                                                i = {
+                                                        ["<C-k>"] = lga_actions.quote_prompt(),
+                                                        ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+                                                        -- freeze the current list and start a fuzzy search in the frozen list
+                                                        ["<C-space>"] = lga_actions.to_fuzzy_refine,
+                                                },
+                                        },
+                                }
                         },
                 })
+
+                telescope.load_extension("live_grep_args")
 
                 -- Enable Telescope extensions if they are installed
                 pcall(require("telescope").load_extension, "fzf")
                 pcall(require("telescope").load_extension, "ui-select")
 
+
+
+
                 -- See `:help telescope.builtin`
                 local builtin = require("telescope.builtin")
-                vim.keymap.set("n", "<leader>sh", function() builtin.help_tags(themes.get_ivy()) end, { desc = "[S]earch [H]elp" })
-                vim.keymap.set("n", "<leader>sk", function() builtin.keymaps(themes.get_ivy()) end, { desc = "[S]earch [K]eymaps" })
-                vim.keymap.set("n", "<leader>sf", function() builtin.find_files(themes.get_ivy()) end, { desc = "[S]earch [F]iles" })
-                vim.keymap.set("n", "<leader>ss", function() builtin.builtin(themes.get_ivy()) end, { desc = "[S]earch [S]elect Telescope" })
-                vim.keymap.set("n", "<leader>sw", function() builtin.grep_string(themes.get_ivy()) end, { desc = "[S]earch current [W]ord" })
-                vim.keymap.set("n", "<leader>sg", function() builtin.live_grep(themes.get_ivy()) end, { desc = "[S]earch by [G]rep" })
-                vim.keymap.set("n", "<leader>sd", function() builtin.diagnostics(themes.get_ivy()) end, { desc = "[S]earch [D]iagnostics" })
-                vim.keymap.set("n", "<leader>sr", function() builtin.resume(themes.get_ivy()) end, { desc = "[S]earch [R]esume" })
+                vim.keymap.set("n", "<leader>sh", function() builtin.help_tags(themes.get_ivy()) end,
+                        { desc = "[S]earch [H]elp" })
+                vim.keymap.set("n", "<leader>sk", function() builtin.keymaps(themes.get_ivy()) end,
+                        { desc = "[S]earch [K]eymaps" })
+                vim.keymap.set("n", "<leader>sf", function() builtin.find_files(themes.get_ivy()) end,
+                        { desc = "[S]earch [F]iles" })
+                vim.keymap.set("n", "<leader>ss", function() builtin.builtin(themes.get_ivy()) end,
+                        { desc = "[S]earch [S]elect Telescope" })
+                vim.keymap.set("n", "<leader>sw", function() builtin.grep_string(themes.get_ivy()) end,
+                        { desc = "[S]earch current [W]ord" })
+                vim.keymap.set("n", "<leader>sg", function() telescope.extensions.live_grep_args.live_grep_args() end,
+                        { desc = "[S]earch by [G]rep" })
+                vim.keymap.set("n", "<leader>sd", function() builtin.diagnostics(themes.get_ivy()) end,
+                        { desc = "[S]earch [D]iagnostics" })
+                vim.keymap.set("n", "<leader>sr", function() builtin.resume(themes.get_ivy()) end,
+                        { desc = "[S]earch [R]esume" })
                 vim.keymap.set("n", "<leader>s.", function() builtin.oldfiles(themes.get_ivy()) end,
                         { desc = '[S]earch Recent Files ("." for repeat)' })
                 vim.keymap.set("n", "<leader>sb", builtin.buffers, { desc = "[ ] Find existing buffers" })

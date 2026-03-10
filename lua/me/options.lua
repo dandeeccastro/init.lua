@@ -1,3 +1,5 @@
+vim.o.guicursor = ""
+
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
