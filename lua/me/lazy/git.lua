@@ -11,18 +11,11 @@ return {
                         },
                 },
         },
-        -- {
-        --         'tanvirtin/vgit.nvim',
-        --         dependencies = {
-        --                 'nvim-lua/plenary.nvim',
-        --                 'nvim-tree/nvim-web-devicons'
-        --         },
-        --         event = 'VimEnter',
-        --         config = function()
-        --                 require('vgit').setup()
-        --
-        --                 vim.keymap.set("n", "<leader>gg", ":VGit project_commit_preview<CR>",
-        --                         { desc = "Project commit preview" })
-        --         end,
-        -- }
+        {
+                "FabijanZulj/blame.nvim",
+                lazy = false,
+                config = function()
+                        require('blame').setup {}
+                end,
+        },
 }
