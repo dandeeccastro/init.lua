@@ -6,4 +6,7 @@ return {
                         require('blame').setup {}
                 end,
         },
+        {
+                'mbbill/undotree',
+        }
 }
