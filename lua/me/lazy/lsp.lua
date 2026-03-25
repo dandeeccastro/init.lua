@@ -173,9 +173,11 @@ return {
                         gdscript = {},
 
                         -- Ruby
-                        -- ruby_lsp = {},
+                        ruby_lsp = {
+                                root_markers = { '.git' },
+                        },
                         -- rubocop = {},
-                        solargraph = {},
+                        -- solargraph = {},
 
                         -- C#
                         omnisharp = {
