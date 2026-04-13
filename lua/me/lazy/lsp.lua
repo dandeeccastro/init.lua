@@ -173,11 +173,10 @@ return {
                         gdscript = {},
 
                         -- Ruby
-                        ruby_lsp = {
-                                root_markers = { '.git' },
-                        },
-                        -- rubocop = {},
-                        -- solargraph = {},
+                        ruby_lsp = { root_markers = { '.git' }, },
+                        herb_ls = {},
+                        stimulus_ls = {},
+                        -- sorbet = {},
 
                         -- C#
                         omnisharp = {
